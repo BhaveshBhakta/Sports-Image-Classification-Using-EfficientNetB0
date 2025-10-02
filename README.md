@@ -1,49 +1,44 @@
-## English Premier League Market Value Prediction
+## Sports Image Classification Using EfficientNetB0
 
 ### Project Overview
 
-This project aims to predict the **market value of professional football players in the English Premier League (EPL)** based on a variety of performance, demographic, and team-related features. By analyzing factors such as age, position, page views, and Fantasy Premier League (FPL) statistics, the goal is to develop a regression model that can accurately estimate a player's market value. This is a crucial task for football clubs in player recruitment and for sports analysts.
+This project aims to classify **images of people performing various sports activities**. By leveraging a deep learning model with transfer learning from a pre-trained convolutional neural network, **EfficientNetB0**, the goal is to build an accurate image classification system that can distinguish between different sports. This has applications in sports analytics, media content tagging, and fitness applications.
 
 -----
 
 ### Technical Highlights
 
-  * **Dataset**: The dataset used is `team_dataset.csv`, which contains player statistics for the EPL.
-  * **Size**: 461 entries, 17 columns.
-  * **Key Features**:
-      * age, position, position\_cat, page\_views, fpl\_value, fpl\_sel, fpl\_points, region, nationality, new\_foreign, age\_cat, club\_id, big\_club, new\_signing.
+  * **Dataset**: [Kaggle - Sports Classification](https://www.kaggle.com/datasets/gpiosenka/sports-classification)
+  * **Size**: The dataset contains 14,492 images, with a training set of 13,492 images, and validation and test sets of 500 images each.
+  * **Key Features**: The raw image data is used as input for the model.
   * **Approach**:
-      * **Data Cleaning**: The `age_cat` column was dropped due to high correlation with `age`. Missing values in `region` and `fpl_sel` were handled by imputation. No duplicate rows were found.
-      * **Exploratory Data Analysis**: Histograms, scatter plots, box plots, and a heatmap were used for visualization to understand data distributions and correlations. The heatmap shows that `fpl_value` and `fpl_points` are moderately correlated.
-      * **Label Encoding**: Applied to all columns, including categorical features and the numerical ones and the target `market_value`.
-      * **Regression Task**: The target variable is `market_value`.
-      * **Models Used**:
-          * A suite of regression models were trained, including Ridge, XGBoost, Random Forest, AdaBoost, Gradient Boosting, Bagging, Decision Tree, SVR, and K-Nearest Neighbors (KNN).
-  * **Best R² Score**:
-      * **0.843** with Gradient Boosting Regressor.
-      * **0.806** with Random Forest Regressor.
-      * **0.805** with XGBoost Regressor.
-      * The scatter plots and R² scores for the top models show a strong relationship between the actual and predicted market values, indicating good predictive performance.
+      * **Data Preparation**: A custom function was used to create pandas DataFrames from the image file paths and labels for the training, validation, and test sets.
+      * **Data Augmentation**: `ImageDataGenerator` was used to augment the training data with transformations like horizontal flips, to increase the dataset's variability and prevent overfitting.
+      * **Transfer Learning**: A pre-trained **EfficientNetB0** model, which was trained on a large image dataset (ImageNet), is used as a feature extractor. The base model's layers were frozen (`trainable=False`).
+      * **Model Architecture**: A custom deep learning model was built on top of the EfficientNetB0 base, featuring a `BatchNormalization` layer, `Dropout` layers, and `Dense` layers for classification. The final `Dense` layer has 10 units with a `softmax` activation for multi-class classification.
+      * **Training**: The model was compiled with the Adam optimizer and `categorical_crossentropy` loss. It was trained for 80 epochs.
+  * **Best Accuracy**:
+      * The model achieved a training accuracy of \~98.1% and a validation accuracy of **93.9%** in the best epoch. The final evaluation on the validation set resulted in a loss of \~0.26 and an accuracy of **91.8%**.
 
 -----
 
 ### Purpose and Applications
 
-  * Enable football clubs to **estimate player market values** during transfer negotiations and recruitment.
-  * Assist sports analysts in evaluating player performance and financial worth.
-  * Provide a foundational model for fantasy sports players to assess player value.
-  * Support data-driven decision-making in sports management and strategy.
+  * **Automated Sports Content Tagging**: Automatically tag sports images for media and broadcasting.
+  * **Sports Analytics**: Analyze and categorize sports actions and movements from video feeds.
+  * **Fitness Applications**: Identify and track different exercises in fitness apps.
+  * **Computer Vision**: Provides a practical example of transfer learning for image classification tasks with a moderately sized dataset.
 
 -----
 
 ### Installation
 
-Clone the repository and download the dataset.
+Clone the repository and extract the data from the zip file.
 
 Install the necessary libraries:
 
 ```bash
-pip install pandas numpy seaborn matplotlib scikit-learn xgboost
+pip install tensorflow keras pandas numpy seaborn matplotlib scikit-learn
 ```
 
 -----
@@ -52,7 +47,7 @@ pip install pandas numpy seaborn matplotlib scikit-learn xgboost
 
 We welcome contributions to improve the project. You can help by:
 
-  * Performing comprehensive hyperparameter tuning for the top-performing regression models.
-  * Exploring more robust strategies for handling missing values, especially for the `region` column.
-  * Investigating advanced feature engineering techniques, such as creating interaction terms between performance and demographic features.
-  * Adding explainability (e.g., SHAP or LIME) to understand which player and team attributes are the most significant drivers of market value.
+  * Fine-tuning the hyperparameters of the custom head and training process to further optimize performance.
+  * Exploring different pre-trained models to compare their effectiveness.
+  * Implementing more robust data augmentation or preprocessing techniques.
+  * Adding a more detailed evaluation on the test set, including a classification report and confusion matrix, to validate the model's performance on unseen data.
